@@ -251,6 +251,13 @@
         (it[2] ? '<span class="dv-s"><small>기여도</small>' + esc(it[2]) + '</span>' : '<span></span>') +
         (href ? '<a class="dv-l" href="' + esc(href) + '" target="_blank" rel="noopener">보기 <svg class="ic" viewBox="0 0 24 24"><use href="#i-arrow"/></svg></a>' : '<span class="dv-l off">준비 중</span>') + '</li>';
     }).join('') + '</ul>' : '';
+    /* 하단 버튼 : links:[['버튼 글자','주소','primary|secondary'], …] 가 있으면 그것들을, 없으면 link 하나를 사용 (둘 다 비면 버튼 없음) */
+    var arrow = ' <svg class="ic" viewBox="0 0 24 24"><use href="#i-arrow"/></svg>';
+    var linkList = (w.links && w.links.length) ? w.links : (w.link ? [['프로젝트 보러가기', w.link, 'primary']] : []);
+    var actionBtns = linkList.map(function (l) {
+      var u = safe(l[1]); if (!u) return '';
+      return '<a class="btn' + (l[2] === 'secondary' ? ' ghost' : '') + '" href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(l[0]) + arrow + '</a>';
+    }).join('');
     var no = 1, nn = function () { return ('0' + (no++)).slice(-2); };
     dlg.innerHTML =
       '<div class="rc"><button class="rc-close" type="button" aria-label="닫기"><svg class="ic" viewBox="0 0 24 24"><use href="#i-x"/></svg></button><div class="rc-in">' +
@@ -262,7 +269,7 @@
       (deliv ? sec(nn(), '결과물', 'DELIVERABLES', deliv) : '') +
       sec(nn(), '결과', 'RESULT', kpis + '<ul class="res">' + w.result.map(function (r) { return '<li><svg class="ic" viewBox="0 0 24 24"><use href="#i-check"/></svg>' + esc(r) + '</li>'; }).join('') + '</ul>') +
       (w.learned ? '<p class="note"><b>배운 점</b>' + esc(w.learned) + '</p>' : '') +
-      '<div class="actions"><a class="btn" href="' + esc(w.link || '#') + '" target="_blank" rel="noopener">프로젝트 보러가기 <svg class="ic" viewBox="0 0 24 24"><use href="#i-arrow"/></svg></a>' +
+      '<div class="actions">' + actionBtns +
       '<button class="btn ghost" type="button" data-step="-1" aria-label="이전 프로젝트">← 이전</button><button class="btn ghost" type="button" data-step="1" aria-label="다음 프로젝트">다음 →</button></div></div>' +
       '<button class="rc-hint" type="button" aria-label="아래로 스크롤"><span>아래로 스크롤</span><svg class="ic" viewBox="0 0 24 24"><use href="#i-arrow"/></svg></button></div>';
     var rcIn = dlg.querySelector('.rc-in');
